@@ -95,7 +95,16 @@ async def on_message(message):
         time.sleep(0.750)
         try:
             stock = message.content.split(' ', 1)[1]
-            await bot.send_message(message.channel, ystock.price(stock))
+            await bot.send_message(message.channel,
+                "```\n" +
+                "Stock Information for {0}\n".format(ystock.get_name(stock)) +
+                "  Price:   {0}\n".format(ystock.get_price(stock)) +
+                "  Open:    {0}\n".format(ystock.get_open(stock)) +
+                "  High:    {0}\n".format(ystock.get_high(stock)) +
+                "  Low:     {0}\n".format(ystock.get_low(stock)) +
+                "  Volume:  {0}\n".format(ystock.get_vol(stock)) +
+                "```"
+            )
         except:
             await bot.send_message(message.channel, 'You must provide a stock symbol.')
         return

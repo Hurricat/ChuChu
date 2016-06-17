@@ -1,71 +1,71 @@
 import requests
 
-urlbase = 'https://api.lootbox.eu/pc/'
+urlbase = 'https://api.lootbox.eu/pc/{0}/{1}/{2}'
+heroes = [
+    'Genji',
+    'Pharah',
+    'McCree',
+    'Reaper',
+    'Soldier: 76',
+    'Tracer',
+    'Bastion',
+    'Hanzo',
+    'Junkrat',
+    'Mei',
+    'Torbjorn',
+    'Widowmaker',
+    'D.Va',
+    'Reinhardt',
+    'Roadhog',
+    'Winston',
+    'Zarya',
+    'Lucio',
+    'Mercy',
+    'Symmetra',
+    'Zenyatta'
+]
 
 def ow(username, region = 'us'):
     username = username.replace('#', '-')
-    finalurl = urlbase + region + '/' + username + '/allHeroes/'
-    response = requests.get(finalurl)
-    stats = response.json()
-    finalurl = urlbase + region + '/' + username + '/profile'
-    response = requests.get(finalurl)
-    profile = response.json()
+    stats = requests.get(urlbase.format(region, username, 'allHeroes/')).json()
+    profile = requests.get(urlbase.format(region, username, 'profile')).json()['data']
 
-    level = str(profile['data']['level'])
-    games = str(profile['data']['games']['played'])
-    wins = str(profile['data']['games']['wins'])
-    losses = str(profile['data']['games']['lost'])
-
-    kills = stats['FinalBlows'].replace(',', '')
-    killassists = int(stats['Eliminations'].replace(',', ''))
-    deaths = int(stats['Deaths'].replace(',', ''))
-    kd = str('%.2f' % (killassists/deaths))
-    killassists = str(killassists)
-    deaths = str(deaths)
-    damage = stats['DamageDone'].replace(',', '')
-    healing = stats['HealingDone'].replace(',', '')
-    medals = stats['Medals'].replace(',', '')
-
-    stats1 = "Total stats for " + username + "(Level: " + level + ", Games: " + games + ", W/L: " + wins + "/" + losses + "):\n"
-    stats2 = "Kills:         " + kills + "\n"
-    stats3 = "Kill Assists:  " + killassists + "\n"
-    stats4 = "K/D:           " + kd + "\n"
-    stats5 = "Deaths:        " + deaths + "\n"
-    stats6 = "Damage:        " + damage + "\n"
-    stats7 = "Healing:       " + healing + "\n"
-    stats8 = "Medals:        " + medals + "\n"
-
-    fullstats = "```\n" + stats1 + stats2 + stats3 + stats4 + stats5 + stats6 + stats7 + stats8 + "```"
+    fullstats = (
+        "```\n" +
+        "Total stats for {0}(Level: {1}, Games: {2}, W/L: {3}/{4}):\n".format(
+                                                                         username,
+                                                                         profile['level'],
+                                                                         profile['games']['played'],
+                                                                         profile['games']['wins'],
+                                                                         profile['games']['lost']
+                                                                       ) +
+        "  Kills:         {0}\n".format(stats['FinalBlows']) +
+        "  Kill Assists:  {0}\n".format(stats['Eliminations']) +
+        "  K/D:           {0}\n".format(str('%.2f' % (int(stats['Eliminations'].replace(',', ''))/int(stats['Deaths'].replace(',', ''))))) +
+        "  Deaths:        {0}\n".format(stats['Deaths']) +
+        "  Damage:        {0}\n".format(stats['DamageDone']) +
+        "  Healing:       {0}\n".format(stats['HealingDone']) +
+        "  Medals:        {0}\n".format(stats['Medals']) +
+        "```"
+    )
 
     return fullstats
 
 def owheroes(username, region = 'us'):
     username = username.replace('#', '-')
-    finalurl = urlbase + region + '/' + username + '/heroes'
-    response = requests.get(finalurl)
-    heroes = response.json()
-    favheroes = []
-
-    for i in range(8):
-        finalurl = urlbase + region + '/' + username + '/hero/' + heroes[i]['name'].replace(': ', '').replace('.', '') + '/'
-        response = requests.get(finalurl)
-        curhero = response.json()
+    topheroes = []
+    for hero in heroes:
+        curhero = requests.get(urlbase.format(region, username, 'hero/') + hero.replace(': ', '').replace('.', '') + '/').json()
         if 'GamesPlayed' in curhero:
-            favheroes.append({'name':heroes[i]['name'], 'games':int(curhero['GamesPlayed'])})
+            topheroes.append({'name':hero, 'games':int(curhero['GamesPlayed'])})
 
-    favheroes = sorted(favheroes, key=lambda k: k['games'], reverse = True)
+    topheroes = sorted(topheroes, key=lambda k: k['games'], reverse = True)
 
+    mostused = ("Top 5 Heroes and games played for {0}:\n".format(username))
+    for i in range(5):
+        mostused = mostused + "  {0}{1}\n".format((topheroes[i]['name'] + ": ").ljust(15), topheroes[i]['games'])
 
-    user = "Top 5 Heroes and games played for " + username + ":\n"
-    hero1 = (favheroes[0]['name'] + ": ").ljust(15) + str(favheroes[0]['games']) + "\n"
-    hero2 = (favheroes[1]['name'] + ": ").ljust(15) + str(favheroes[1]['games']) + "\n"
-    hero3 = (favheroes[2]['name'] + ": ").ljust(15) + str(favheroes[2]['games']) + "\n"
-    hero4 = (favheroes[3]['name'] + ": ").ljust(15) + str(favheroes[3]['games']) + "\n"
-    hero5 = (favheroes[4]['name'] + ": ").ljust(15) + str(favheroes[4]['games']) + "\n"
-
-    topheroes = "```\n" + user + hero1 + hero2 + hero3 + hero4 + hero5 + "```"
-
-    return topheroes 
+    return "```\n" + mostused + "```"
 
 def owhero(username, hero, region = 'us'):
     finalurl = urlbase + region + '/' + username + '/hero/' + hero + '/'
