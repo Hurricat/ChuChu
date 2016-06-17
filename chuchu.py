@@ -84,9 +84,9 @@ async def on_message(message):
         time.sleep(0.750)
         try:
             punchtarget = message.content.split(' ', 1)[1]
-            await bot.send_message(message.channel, 'I am going to punch ' + message.content.split(' ', 1)[1] + '.')
         except:
-            await bot.send_message(message.channel, 'I am going to punch someone.')
+            punchtarget = 'someone'
+        await bot.send_message(message.channel, 'I am going to punch {0}.'.format(punchtarget))
         return
 
     #get stock prices
