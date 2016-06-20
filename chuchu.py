@@ -36,6 +36,34 @@ async def on_member_join(member):
 @bot.event
 async def on_message(message):
 
+    #typing
+    async def typing():
+        await bot.send_typing(message.channel)
+        time.sleep(0.750)
+
+    #message in same channel
+    async def msgInChannel(content):
+        await typing()
+        await bot.send_message(message.channel, content)
+
+    #message in server's default channel
+    async def msgInMain(content):
+        await typing()
+        await bot.send_message(message.server, content)
+
+    #reply to message
+    async def reply(content):
+        replyformat = '{0.mention} {1}'
+        await msgInChannel(replyformat.format(message.author, content))
+
+    #change playing game
+    async def changeGame(game):
+        await bot.change_status(game)
+
+    async def clearChannel(amount = 100):
+        await bot.purge_from(channel = message.channel, limit = amount)
+        
+
     #message log
     print(message.timestamp.strftime("%Y-%m-%d %H:%M:%S") + ' - ' + (message.author.name[:13] + ': ').ljust(15) + message.content)
     
@@ -45,20 +73,13 @@ async def on_message(message):
 
     #cleverbot
     if bot.user.mentioned_in(message):
-        await bot.send_typing(message.channel)
-        time.sleep(0.750)
-        fmt = '{0.mention} {1}'
-        await bot.send_message(message.channel, fmt.format(message.author, chatbot.message(message.content)))
+        await reply(chatbot.message(message.content))
         return
     
     #command list
     if message.content.startswith('!help'):
-        await bot.send_typing(message.channel)
-        time.sleep(0.750)
-        await bot.send_message(message.channel,"I'm ChuChu, here's a list of what I can do:")
-        await bot.send_typing(message.channel)
-        time.sleep(1.5)
-        await bot.send_message(message.channel,
+        await msgInChannel("I'm ChuChu, here's a list of what I can do:")
+        await msgInChannel(
             "```\n"
             "@ChuChu              - I can respond to mentions.\n"
             "!help                - Display this message.\n"
@@ -73,29 +94,23 @@ async def on_message(message):
 
     #check if kdw online
     if message.content.startswith('!kdwstatus'):
-        await bot.send_typing(message.channel)
-        time.sleep(0.750)
-        await bot.send_message(message.channel, kdw.status(address, port))
+        await msgInChannel(kdw.status(address, port))
         return
 
     #punch someone
     if message.content.startswith('!punch'):
-        await bot.send_typing(message.channel)
-        time.sleep(0.750)
         try:
             punchtarget = message.content.split(' ', 1)[1]
         except:
             punchtarget = 'someone'
-        await bot.send_message(message.channel, 'I am going to punch {0}.'.format(punchtarget))
+        await msgInChannel('I am going to punch {0}.'.format(punchtarget))
         return
 
     #get stock prices
     if message.content.startswith('!stock'):
-        await bot.send_typing(message.channel)
-        time.sleep(0.750)
         try:
             stock = message.content.split(' ', 1)[1]
-            await bot.send_message(message.channel,
+            stockInfo = (
                 "```\n" +
                 "Stock Information for {0}\n".format(ystock.get_name(stock)) +
                 "  Price:   {0}\n".format(ystock.get_price(stock)) +
@@ -106,19 +121,18 @@ async def on_message(message):
                 "```"
             )
         except:
-            await bot.send_message(message.channel, 'You must provide a stock symbol.')
+            stockInfo = "Please give a valid stock symbol"
+        await msgInChannel(stockInfo)
         return
 
     #ow top heroes
     if message.content.startswith('!owheroes'):
-        await bot.send_typing(message.channel)
         try:
             owuser = message.content.split(' ', 1)[1]
             owmessage = overwatch.owheroes(owuser)
-            await bot.send_message(message.channel, owmessage)
         except:
-            time.sleep(0.750)
-            await bot.send_message(message.channel, 'Please provide a valid username.')
+            owmessage = "Please provide a valid username"
+        await msgInChannel(owmessage)
         return
 
     #overall ow stats
@@ -127,10 +141,9 @@ async def on_message(message):
         try:
             owuser = message.content.split(' ', 1)[1]
             owmessage = overwatch.ow(owuser)
-            await bot.send_message(message.channel, owmessage)
         except:
-            time.sleep(0.750)
-            await bot.send_message(message.channel, 'Please provide a valid username.')
+            owmessage = "Please provide a valid username"
+        await msgInChannel(owmessage)
         return
 
     #change game
@@ -140,11 +153,11 @@ async def on_message(message):
                 gametarget = message.content.split(' ', 1)[1]
                 newGame = discord.Game()
                 newGame.name = gametarget
-                await bot.change_status(newGame)
             except:
-                await bot.change_status(defaultGame)
+                newGame = defaultGame
+            await changeGame(newGame)
         else:
-            await bot.send_message(message.channel, 'Sorry, only Cat can do that.')
+            await msgInChannel('Sorry, only Cat can do that.')
         return
 
     #clear channel
@@ -152,11 +165,11 @@ async def on_message(message):
         if message.author.id == catid:
             try:
                 clearamount = message.content.split(' ', 1)[1]
-                await bot.purge_from(channel = message.channel, limit = clearamount)
+                await clearChannel(clearamount)
             except:
-                await bot.purge_from(channel = message.channel, limit = 1000000)
+                await clearChannel()
         else:
-            await bot.send_message(message.channel, 'Sorry, only Cat can do that.')
+            await msgInChannel('Sorry, only Cat can do that.')
         return
 
 
