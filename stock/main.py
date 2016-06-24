@@ -1,5 +1,6 @@
 import requests
 import cgi
+
 urlbase = 'http://query.yahooapis.com/v1/public/yql?q={0}&env=store://datatables.org/alltableswithkeys&format=json'
 querybase = 'select * from yahoo.finance.quotes where symbol in ("{0}")'
 

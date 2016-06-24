@@ -3,10 +3,10 @@ import asyncio
 import time
 import datetime
 
-import chatbot
-import kdw
-import ystock
-import overwatch
+import chatbot.main as chatbot
+import kdw.main as kdw
+import stock.main as stock
+import overwatch.main as ow
 
 address = '76.77.225.51'
 port = 4002
@@ -113,11 +113,11 @@ async def on_message(message):
             stockInfo = (
                 "```\n" +
                 "Stock Information for {0}\n".format(ystock.get_name(stock)) +
-                "  Price:   {0}\n".format(ystock.get_price(stock)) +
-                "  Open:    {0}\n".format(ystock.get_open(stock)) +
-                "  High:    {0}\n".format(ystock.get_high(stock)) +
-                "  Low:     {0}\n".format(ystock.get_low(stock)) +
-                "  Volume:  {0}\n".format(ystock.get_vol(stock)) +
+                "  Price:   {0}\n".format(stock.get_price(stock)) +
+                "  Open:    {0}\n".format(stock.get_open(stock)) +
+                "  High:    {0}\n".format(stock.get_high(stock)) +
+                "  Low:     {0}\n".format(stock.get_low(stock)) +
+                "  Volume:  {0}\n".format(stock.get_vol(stock)) +
                 "```"
             )
         except:
@@ -129,7 +129,7 @@ async def on_message(message):
     # if message.content.startswith('!owheroes'):
     #     try:
     #         owuser = message.content.split(' ', 1)[1]
-    #         owmessage = overwatch.owheroes(owuser)
+    #         owmessage = ow.owheroes(owuser)
     #     except:
     #         owmessage = "Please provide a valid username"
     #     await msgInChannel(owmessage)
@@ -140,7 +140,7 @@ async def on_message(message):
         await bot.send_typing(message.channel)
         try:
             owuser = message.content.split(' ', 1)[1]
-            owmessage = overwatch.ow(owuser)
+            owmessage = ow.ow(owuser)
         except:
             owmessage = "Please provide a valid username"
         await msgInChannel(owmessage)
