@@ -87,7 +87,7 @@ async def on_message(message):
             "!stock [symbol]      - Get the price of a stock.\n"
             "!kdwstatus           - Check if KDW is online.\n"
             "!ow [username]       - Get general Overwatch stats.\n"
-            "!owheroes [username] - Get top 5 Overwatch heroes.\n"
+            # "!owheroes [username] - Get top 5 Overwatch heroes.\n"
             "```"
         )
         return
@@ -126,14 +126,14 @@ async def on_message(message):
         return
 
     #ow top heroes
-    if message.content.startswith('!owheroes'):
-        try:
-            owuser = message.content.split(' ', 1)[1]
-            owmessage = overwatch.owheroes(owuser)
-        except:
-            owmessage = "Please provide a valid username"
-        await msgInChannel(owmessage)
-        return
+    # if message.content.startswith('!owheroes'):
+    #     try:
+    #         owuser = message.content.split(' ', 1)[1]
+    #         owmessage = overwatch.owheroes(owuser)
+    #     except:
+    #         owmessage = "Please provide a valid username"
+    #     await msgInChannel(owmessage)
+    #     return
 
     #overall ow stats
     if message.content.startswith('!ow'):
