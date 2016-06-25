@@ -109,15 +109,15 @@ async def on_message(message):
     #get stock prices
     if message.content.startswith('!stock'):
         try:
-            stock = message.content.split(' ', 1)[1]
+            stocksym = message.content.split(' ', 1)[1]
             stockInfo = (
                 "```\n" +
-                "Stock Information for {0}\n".format(ystock.get_name(stock)) +
-                "  Price:   {0}\n".format(stock.get_price(stock)) +
-                "  Open:    {0}\n".format(stock.get_open(stock)) +
-                "  High:    {0}\n".format(stock.get_high(stock)) +
-                "  Low:     {0}\n".format(stock.get_low(stock)) +
-                "  Volume:  {0}\n".format(stock.get_vol(stock)) +
+                "Stock Information for {0}\n".format(stock.get_name(stocksym)) +
+                "  Price:   {0}\n".format(stock.get_price(stocksym)) +
+                "  Open:    {0}\n".format(stock.get_open(stocksym)) +
+                "  High:    {0}\n".format(stock.get_high(stocksym)) +
+                "  Low:     {0}\n".format(stock.get_low(stocksym)) +
+                "  Volume:  {0}\n".format(stock.get_vol(stocksym)) +
                 "```"
             )
         except:
