@@ -87,7 +87,7 @@ async def on_message(message):
             "!stock [symbol]      - Get the price of a stock.\n"
             "!kdwstatus           - Check if KDW is online.\n"
             "!ow [username]       - Get general Overwatch stats.\n"
-            # "!owheroes [username] - Get top 5 Overwatch heroes.\n"
+            "!owheroes [username] - Get top 5 Overwatch heroes.\n"
             "```"
         )
         return
@@ -137,14 +137,17 @@ async def on_message(message):
             return
 
         #ow top heroes
-        # if message.content.startswith('!owheroes'):
-        #     try:
-        #         owuser = message.content.split(' ', 1)[1]
-        #         owmessage = ow.owheroes(owuser)
-        #     except:
-        #         owmessage = "Please provide a valid username"
-        #     await msgInChannel(owmessage)
-        #     return
+        if (cmd == 'owheroes'):
+            if (args != ''):
+                try:
+                    owuser = args
+                    owmessage = ow.owheroes(owuser)
+                except:
+                    owmessage = "Either the username is invalid or the API is down"
+            else:
+                owmessage = "Please provide a username"
+            await msgInChannel(owmessage)
+            return
 
         #overall ow stats
         if (cmd == 'ow'):
@@ -153,7 +156,7 @@ async def on_message(message):
                     owuser = args
                     owmessage = ow.ow(owuser)
                 except:
-                    owmessage = "Either the username is invalid or the Lootbox API is down"
+                    owmessage = "Either the username is invalid or the API is down"
             else:
                 owmessage = "Please provide a username"
             await msgInChannel(owmessage)
