@@ -29,7 +29,7 @@ async def on_member_join(member):
     #welcome message
     server = member.server
     fmt = 'Welcome {0.mention} to {1.name}!'
-    await bot.send_typing(message.server)
+    await bot.send_typing(server)
     time.sleep(0.750)
     await bot.send_message(server, fmt.format(member, server))
 
@@ -91,86 +91,99 @@ async def on_message(message):
             "```"
         )
         return
-
-    #check if kdw online
-    if message.content.startswith('!kdwstatus'):
-        await msgInChannel(kdw.status(address, port))
-        return
-
-    #punch someone
-    if message.content.startswith('!punch'):
+    
+    if message.content.startswith('!'):
         try:
-            punchtarget = message.content.split(' ', 1)[1]
+            cmd = message.content.split(' ', 1)[0].replace('!','')
+            args = message.content.split(' ', 1)[1]
         except:
-            punchtarget = 'someone'
-        await msgInChannel('I am going to punch {0}.'.format(punchtarget))
-        return
+            cmd = message.content.replace('!','')
+            args = ''
 
-    #get stock prices
-    if message.content.startswith('!stock'):
-        try:
-            stocksym = message.content.split(' ', 1)[1]
-            stockInfo = (
-                "```\n" +
-                "Stock Information for {0}\n".format(stock.get_name(stocksym)) +
-                "  Price:   {0}\n".format(stock.get_price(stocksym)) +
-                "  Open:    {0}\n".format(stock.get_open(stocksym)) +
-                "  High:    {0}\n".format(stock.get_high(stocksym)) +
-                "  Low:     {0}\n".format(stock.get_low(stocksym)) +
-                "  Volume:  {0}\n".format(stock.get_vol(stocksym)) +
-                "```"
-            )
-        except:
-            stockInfo = "Please give a valid stock symbol"
-        await msgInChannel(stockInfo)
-        return
+        #check if kdw online
+        if (cmd == 'kdwstatus'):
+            await msgInChannel(kdw.status(address, port))
+            return
 
-    #ow top heroes
-    # if message.content.startswith('!owheroes'):
-    #     try:
-    #         owuser = message.content.split(' ', 1)[1]
-    #         owmessage = ow.owheroes(owuser)
-    #     except:
-    #         owmessage = "Please provide a valid username"
-    #     await msgInChannel(owmessage)
-    #     return
+        #punch someone
+        if (cmd == 'punch'):
+            if (args != ''):
+                punchtarget = args
+            else:
+                punchtarget = 'someone'
+            await msgInChannel('I am going to punch {0}.'.format(punchtarget))
+            return
 
-    #overall ow stats
-    if message.content.startswith('!ow'):
-        await bot.send_typing(message.channel)
-        try:
-            owuser = message.content.split(' ', 1)[1]
-            owmessage = ow.ow(owuser)
-        except:
-            owmessage = "Please provide a valid username"
-        await msgInChannel(owmessage)
-        return
+        #get stock prices
+        if (cmd == 'stock'):
+            if (args != ''):
+                try:
+                    stocksym = args
+                    stockInfo = (
+                        "```\n" +
+                        "Stock Information for {0}\n".format(stock.get_name(stocksym)) +
+                        "  Price:   {0}\n".format(stock.get_price(stocksym)) +
+                        "  Open:    {0}\n".format(stock.get_open(stocksym)) +
+                        "  High:    {0}\n".format(stock.get_high(stocksym)) +
+                        "  Low:     {0}\n".format(stock.get_low(stocksym)) +
+                        "  Volume:  {0}\n".format(stock.get_vol(stocksym)) +
+                        "```"
+                    )
+                except:
+                    stockInfo = "Invalid stock symbol"
+            else:
+                stockInfo = "Please provide a stock symbol"
+            await msgInChannel(stockInfo)
+            return
 
-    #change game
-    if message.content.startswith('!game'):
-        if message.author.id == catid:
-            try:
-                gametarget = message.content.split(' ', 1)[1]
-                newGame = discord.Game()
-                newGame.name = gametarget
-            except:
-                newGame = defaultGame
-            await changeGame(newGame)
-        else:
-            await msgInChannel('Sorry, only Cat can do that.')
-        return
+        #ow top heroes
+        # if message.content.startswith('!owheroes'):
+        #     try:
+        #         owuser = message.content.split(' ', 1)[1]
+        #         owmessage = ow.owheroes(owuser)
+        #     except:
+        #         owmessage = "Please provide a valid username"
+        #     await msgInChannel(owmessage)
+        #     return
 
-    #clear channel
-    if message.content.startswith('!clear'):
-        if message.author.id == catid:
-            try:
-                clearamount = message.content.split(' ', 1)[1]
-                await clearChannel(clearamount)
-            except:
-                await clearChannel()
-        else:
-            await msgInChannel('Sorry, only Cat can do that.')
-        return
+        #overall ow stats
+        if (cmd == 'ow'):
+            if (args != ''):
+                try:
+                    owuser = args
+                    owmessage = ow.ow(owuser)
+                except:
+                    owmessage = "Either the username is invalid or the Lootbox API is down"
+            else:
+                owmessage = "Please provide a username"
+            await msgInChannel(owmessage)
+            return
+
+        #change game
+        if (cmd == 'game'):
+            if message.author.id == catid:
+                if (args != ''):
+                    gametarget = args
+                    newGame = discord.Game()
+                    newGame.name = gametarget
+                else:
+                    newGame = defaultGame
+                await changeGame(newGame)
+            else:
+                await msgInChannel('Sorry, only Cat can do that.')
+            return
+
+        #clear channel
+        if (cmd == 'clear'):
+            if message.author.id == catid:
+                if (args != ''):
+                    clearamount = args
+                    await clearChannel(clearamount)
+                else:
+                    await clearChannel()
+            else:
+                await msgInChannel('Sorry, only Cat can do that.')
+            return
 
 
-bot.run('MTkyNzgwOTU2NDY4Mzc5NjQ4.CkN0wQ.8A51zVZjbwBCtqp5WPtHrWVPsuw')
+bot.run('MTkyNzgwOTU2NDY4Mzc5NjQ4.ClRUIQ.20rdrYHxJeEOASwOwAv1mfmqGPU')

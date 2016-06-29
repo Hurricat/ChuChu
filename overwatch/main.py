@@ -1,6 +1,6 @@
 import requests
 
-urlbase = 'https://api.lootbox.eu/pc/{0}/{1}/{2}'
+urlbase = 'https://owapi.net/api/v2/u/{0}/{1}'
 heroes = [
     'Genji',
     'Pharah',
@@ -27,25 +27,28 @@ heroes = [
 
 def ow(username, region = 'us'):
     username = username.replace('#', '-')
-    stats = requests.get(urlbase.format(region, username, 'allHeroes/')).json()
-    profile = requests.get(urlbase.format(region, username, 'profile')).json()['data']
+    allstats = requests.get(urlbase.format(username, 'stats')).json()
+    print(urlbase.format(username, 'stats'))
+    overallstats = allstats['overall_stats']
+    gamestats = allstats['game_stats']
 
     fullstats = (
         "```\n" +
-        "Total stats for {0}(Level: {1}, Games: {2}, W/L: {3}/{4}):\n".format(
+        "Total stats for {0}(Level: {1}, Games: {2}, W/L: {3}/{4} ({5}%)):\n".format(
                                                                          username,
-                                                                         profile['level'],
-                                                                         profile['games']['played'],
-                                                                         profile['games']['wins'],
-                                                                         profile['games']['lost']
+                                                                         overallstats['level'],
+                                                                         overallstats['games'],
+                                                                         overallstats['wins'],
+                                                                         overallstats['losses'],
+                                                                         overallstats['win_rate']
                                                                        ) +
-        "  Kills:         {0}\n".format(stats['FinalBlows']) +
-        "  Kill Assists:  {0}\n".format(stats['Eliminations']) +
-        "  K/D:           {0}\n".format(str('%.2f' % (int(stats['Eliminations'].replace(',', ''))/int(stats['Deaths'].replace(',', ''))))) +
-        "  Deaths:        {0}\n".format(stats['Deaths']) +
-        "  Damage:        {0}\n".format(stats['DamageDone']) +
-        "  Healing:       {0}\n".format(stats['HealingDone']) +
-        "  Medals:        {0}\n".format(stats['Medals']) +
+        "  Kills:         {0}\n".format(gamestats['final_blows']) +
+        "  Kill Assists:  {0}\n".format(gamestats['eliminations']) +
+        "  K/D:           {0}\n".format(gamestats['kpd']) +
+        "  Deaths:        {0}\n".format(gamestats['deaths']) +
+        "  Damage:        {0}\n".format(gamestats['damage_done']) +
+        "  Healing:       {0}\n".format(gamestats['healing_done']) +
+        "  Medals:        {0}\n".format(gamestats['medals']) +
         "```"
     )
 
