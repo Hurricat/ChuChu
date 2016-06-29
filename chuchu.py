@@ -149,6 +149,22 @@ async def on_message(message):
             await msgInChannel(owmessage)
             return
 
+        #hero specific stats
+        if (cmd == 'owhero'):
+            if (args != ''):
+                try:
+                    owuser = args.split(' ', 1)[0]
+                    print(owuser)
+                    owhero = args.split(' ', 1)[1]
+                    print(owhero)
+                    owmessage = ow.owhero(owuser, owhero)
+                except:
+                    owmessage = "Either the username/hero is invalid or the API is down"
+            else:
+                owmessage = "Please provide a username and hero"
+            await msgInChannel(owmessage)
+            return
+
         #overall ow stats
         if (cmd == 'ow'):
             if (args != ''):
