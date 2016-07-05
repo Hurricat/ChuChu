@@ -12,7 +12,7 @@ ChuChu requires the following to be installed:
 ### Features
 The following commands can be used:
 ```
-!help                     -  Prints a command list
+!help                     - Prints a command list
 !stock [symbol]           - Gets stock information
 !ow [username]            - Gets general Overwatch stats
 !owheroes [username]      - Gets top 5 Overwatch heroes for user
