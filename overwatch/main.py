@@ -27,7 +27,7 @@ herobase = {
 
 def ow(username):
     username = username.replace('#', '-')
-    allstats = requests.get(urlbase.format(username, 'stats')).json()
+    allstats = requests.get(urlbase.replace('v1', 'v2').format(username, 'stats')).json()
     overallstats = allstats['overall_stats']
     gamestats = allstats['game_stats']
 

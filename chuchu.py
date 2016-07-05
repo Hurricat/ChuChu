@@ -2,6 +2,7 @@ import discord
 import asyncio
 import time
 import datetime
+import argparse
 
 import chatbot.main as chatbot
 import kdw.main as kdw
@@ -14,6 +15,11 @@ bot = discord.Client()
 defaultGame = discord.Game()
 defaultGame.name = "Kirby's Dream World"
 catid = '132072321421672448'
+logfile = open('log.txt', 'a')
+
+parser = argparse.ArgumentParser()
+parser.add_argument("token", help = "the application token for the bot to use")
+args = parser.parse_args()
 
 @bot.event
 async def on_ready():
@@ -65,33 +71,14 @@ async def on_message(message):
         
 
     #message log
-    print(message.timestamp.strftime("%Y-%m-%d %H:%M:%S") + ' - ' + (message.author.name[:13] + ': ').ljust(15) + message.content)
+    logmsg = message.timestamp.strftime("%Y-%m-%d %H:%M:%S") + ' - ' + (message.author.name[:13] + ': ').ljust(15) + message.content
+    logfile.write(logmsg + '\n')
+    print(logmsg)
     
     #don't respond to self
     if message.author.id == bot.user.id:
         return
 
-    #cleverbot
-    if bot.user.mentioned_in(message):
-        await reply(chatbot.message(message.content))
-        return
-    
-    #command list
-    if message.content.startswith('!help'):
-        await msgInChannel("I'm ChuChu, here's a list of what I can do:")
-        await msgInChannel(
-            "```\n"
-            "@ChuChu              - I can respond to mentions.\n"
-            "!help                - Display this message.\n"
-            "!punch [person]      - Punch the person specified.\n"
-            "!stock [symbol]      - Get the price of a stock.\n"
-            "!kdwstatus           - Check if KDW is online.\n"
-            "!ow [username]       - Get general Overwatch stats.\n"
-            "!owheroes [username] - Get top 5 Overwatch heroes.\n"
-            "```"
-        )
-        return
-    
     if message.content.startswith('!'):
         try:
             cmd = message.content.split(' ', 1)[0].replace('!','')
@@ -100,6 +87,23 @@ async def on_message(message):
             cmd = message.content.replace('!','')
             args = ''
 
+        #command list
+        if (cmd == 'help'):
+            await msgInChannel("I'm ChuChu, here's a list of what I can do:")
+            await msgInChannel(
+                "```\n"
+                "@ChuChu                   - I can respond to mentions.\n"
+                "!help                     - Display this message.\n"
+                "!punch [person]           - Punch the person specified.\n"
+                "!stock [symbol]           - Get the price of a stock.\n"
+                "!kdwstatus                - Check if KDW is online.\n"
+                "!ow [username]            - Get general Overwatch stats.\n"
+                "!owheroes [username]      - Get top 5 Overwatch heroes.\n"
+                "!owhero [username] [hero] - Get stats for specific hero.\n"
+                "```"
+            )
+            return
+    
         #check if kdw online
         if (cmd == 'kdwstatus'):
             await msgInChannel(kdw.status(address, port))
@@ -204,5 +208,10 @@ async def on_message(message):
                 await msgInChannel('Sorry, only Cat can do that.')
             return
 
+    #cleverbot
+    if bot.user.mentioned_in(message) or message.channel.is_private:
+        await reply(chatbot.message(message.content))
+        return
 
-bot.run('MTkyNzgwOTU2NDY4Mzc5NjQ4.ClRUIQ.20rdrYHxJeEOASwOwAv1mfmqGPU')
+
+bot.run(args.token)
