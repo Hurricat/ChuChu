@@ -3,6 +3,7 @@ import asyncio
 import time
 import datetime
 import argparse
+import subprocess
 
 import chatbot.main as chatbot
 import kdw.main as kdw
@@ -100,6 +101,8 @@ async def on_message(message):
                 "!ow [username]            - Get general Overwatch stats.\n"
                 "!owheroes [username]      - Get top 5 Overwatch heroes.\n"
                 "!owhero [username] [hero] - Get stats for specific hero.\n"
+                "!cowsay [text]            - Have a cow say something.\n"
+                "!cowthink [text]          - Have a cow think about something.\n"
                 "```"
             )
             return
@@ -181,6 +184,22 @@ async def on_message(message):
                 owmessage = "Please provide a username"
             await msgInChannel(owmessage)
             return
+
+        if (cmd == 'cowsay'):
+            if (args != ''):
+                if args.startswith('-'):
+                    args = args.replace('-', '')
+                cowmessage = subprocess.check_output(['cowsay', args]).decode('utf-8')
+            else:
+                cowmessage = subprocess.check_output(['cowsay', 'Please provide some text']).decode('utf-8')
+            await msgInChannel('```\n' + cowmessage + '```')
+
+        if (cmd == 'cowthink'):
+            if (args != ''):
+                cowmessage = subprocess.check_output(['cowthink', args]).decode('utf-8')
+            else:
+                cowmessage = subprocess.check_output(['cowthink', 'Please provide some text']).decode('utf-8')
+            await msgInChannel('```\n' + cowmessage + '```')
 
         #change game
         if (cmd == 'game'):

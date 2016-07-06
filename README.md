@@ -8,6 +8,7 @@ ChuChu requires the following to be installed:
 * Python 3.5 or later
 * cleverbot module
 * discord.py module
+* cowsay in PATH
 
 ### Features
 The following commands can be used:
