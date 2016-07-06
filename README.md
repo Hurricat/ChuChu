@@ -18,6 +18,8 @@ The following commands can be used:
 !ow [username]            - Gets general Overwatch stats
 !owheroes [username]      - Gets top 5 Overwatch heroes for user
 !owhero [username] [hero] - Gets hero specific stats for user
+!cowsay [text]            - Runs text through cowsay
+!cowthink [text]          - Runs text through cowthink
 !kdwstatus                - Gets server status of Kirby's Dream World
 ```
 
