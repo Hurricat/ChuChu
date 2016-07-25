@@ -38,7 +38,7 @@ def owheroes(username):
     username = username.replace('#', '-')
     heroes = requests.get(urlbase.format(username, 'heroes')).json()['heroes']
 
-    mostused = "Top 5 Most Played Heroes and Amount of Games for {0}:\n".format(username)
+    mostused = "Heroes Played and Amount of Games for {0}:\n".format(username)
 
     for hero in heroes:
         mostused = mostused + "{0}: {1}\n".format(hero['name'].title(), hero['games'])
