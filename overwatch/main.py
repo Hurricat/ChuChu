@@ -1,33 +1,13 @@
 import requests
 
-urlbase = 'https://owapi.net/api/v1/u/{0}/{1}'
-herobase = {
-    "roadhog": "1",
-    "junkrat": "2",
-    "lucio": "3",
-    "soldier76": "4",
-    "zarya": "5",
-    "mccree": "6",
-    "tracer": "7",
-    "reaper": "8",
-    "widowmaker": "9",
-    "winston": "10",
-    "pharah": "11",
-    "reinhardt": "12",
-    "symmetra": "13",
-    "torbjorn": "14",
-    "bastion": "15",
-    "hanzo": "16",
-    "mercy": "17",
-    "zenyatta": "18",
-    "mei": "20",
-    "genji": "21",
-    "dva": "22"
+urlbase = 'http://owapi.net/api/v2/u/{0}/{1}'
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0"
 }
 
 def ow(username):
     username = username.replace('#', '-')
-    allstats = requests.get(urlbase.replace('v1', 'v2').format(username, 'stats')).json()
+    allstats = requests.get(urlbase.replace('v1', 'v2').format(username, 'stats'), headers = headers).json()
     overallstats = allstats['overall_stats']
     gamestats = allstats['game_stats']
 
@@ -69,18 +49,12 @@ def owhero(username, hero):
     username = username.replace('#', '-')
     heroname = hero.replace(' ', '').replace(':', '').replace('.', '')
     heroname = heroname.lower()
-    heroid = herobase[heroname]
 
-    herostats = requests.get(urlbase.format(username, 'heroes/') + heroid).json()['stats']
+    herostats = requests.get(urlbase.format(username, 'heroes/') + heroname).json()['hero_stats']
 
     returnstats = "{0} stats for {1}:\n".format(username, hero)
 
     for herostat in herostats:
-        if herostat['name'] == "hero-specific stats":
-            for stat in herostat['stats']:
-                returnstats = returnstats + "{0}: {1}\n".format(stat['name'].title(), stat['value'])
-            break
-
-                
+        returnstats = returnstats + "{0}: {1}\n".format(herostat.replace('_', ' ').title(), herostats[herostat])
 
     return "```\n" + returnstats + "```"
