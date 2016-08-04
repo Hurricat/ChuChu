@@ -7,7 +7,7 @@ headers = {
 
 def ow(username):
     username = username.replace('#', '-')
-    allstats = requests.get(urlbase.replace('v1', 'v2').format(username, 'stats'), headers = headers).json()
+    allstats = requests.get(urlbase.format(username, 'stats'), headers = headers).json()
     overallstats = allstats['overall_stats']
     gamestats = allstats['game_stats']
 
@@ -36,7 +36,7 @@ def ow(username):
 
 def owheroes(username):
     username = username.replace('#', '-')
-    heroes = requests.get(urlbase.format(username, 'heroes')).json()['heroes']
+    heroes = requests.get(urlbase.replace('v2', 'v1').format(username, 'heroes')).json()['heroes']
 
     mostused = "Heroes Played and Amount of Games for {0}:\n".format(username)
 

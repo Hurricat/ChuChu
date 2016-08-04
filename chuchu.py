@@ -14,7 +14,7 @@ address = '76.77.225.51'
 port = 4002
 bot = discord.Client()
 defaultGame = discord.Game()
-defaultGame.name = "Kirby's Dream World"
+defaultGame.name = "SHOW BY ROCK!!"
 catid = '132072321421672448'
 logfile = open('log.txt', 'a')
 
@@ -79,7 +79,7 @@ async def on_message(message):
     #don't respond to self
     if message.author.id == bot.user.id:
         return
-
+    
     if message.content.startswith('!'):
         try:
             cmd = message.content.split(' ', 1)[0].replace('!','')
@@ -90,7 +90,6 @@ async def on_message(message):
 
         #command list
         if (cmd == 'help'):
-            await msgInChannel("I'm ChuChu, here's a list of what I can do:")
             await msgInChannel(
                 "```\n"
                 "@ChuChu                   - I can respond to mentions.\n"
