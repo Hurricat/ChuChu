@@ -1,13 +1,14 @@
-import requests
+import json
+import urllib3
+import certifi
 
 urlbase = 'http://owapi.net/api/v2/u/{0}/{1}'
-headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0"
-}
+http = urllib3.PoolManager(cert_reqs = 'CERT_REQUIRED', ca_certs = certifi.where())
 
 def ow(username):
     username = username.replace('#', '-')
-    allstats = requests.get(urlbase.format(username, 'stats'), headers = headers).json()
+    r = http.request('GET', urlbase.format(username, 'stats/general'))
+    allstats = json.loads(r.data.decode('utf-8'))
     overallstats = allstats['overall_stats']
     gamestats = allstats['game_stats']
 
@@ -36,12 +37,13 @@ def ow(username):
 
 def owheroes(username):
     username = username.replace('#', '-')
-    heroes = requests.get(urlbase.replace('v2', 'v1').format(username, 'heroes')).json()['heroes']
+    r = http.request('GET', urlbase.format(username, 'heroes/general'))
+    heroes = json.loads(r.data.decode('utf-8'))['heroes']
 
-    mostused = "Heroes Played and Amount of Games for {0}:\n".format(username)
+    mostused = "Heroes Played and Playtime for {0}:\n".format(username)
 
     for hero in heroes:
-        mostused = mostused + "{0}: {1}\n".format(hero['name'].title(), hero['games'])
+        mostused = mostused + "{0}: {1} hours\n".format(hero.title(), heroes[hero])
 
     return "```\n" + mostused + "```"
 
@@ -50,7 +52,8 @@ def owhero(username, hero):
     heroname = hero.replace(' ', '').replace(':', '').replace('.', '')
     heroname = heroname.lower()
 
-    herostats = requests.get(urlbase.format(username, 'heroes/') + heroname).json()['hero_stats']
+    r = http.request('GET', urlbase.format(username, 'heroes/') + heroname)
+    herostats = json.loads(r.data.decode('utf-8'))['hero_stats']
 
     returnstats = "{0} stats for {1}:\n".format(username, hero)
 
