@@ -193,7 +193,7 @@ async def on_message(message):
             if (args != ''):
                 try:
                     owuser = args
-                    owmessage = ow.owheroes(owuser)
+                    owmessage = await ow.owheroes(owuser)
                 except:
                     owmessage = "Either the username is invalid or the API is down"
             else:
@@ -209,7 +209,7 @@ async def on_message(message):
                     print(owuser)
                     owhero = args.split(' ', 1)[1]
                     print(owhero)
-                    owmessage = ow.owhero(owuser, owhero)
+                    owmessage = await ow.owhero(owuser, owhero)
                 except:
                     owmessage = "Either the username/hero is invalid or the API is down"
             else:
@@ -222,7 +222,7 @@ async def on_message(message):
             if (args != ''):
                 try:
                     owuser = args
-                    owmessage = ow.ow(owuser)
+                    owmessage = await ow.ow(owuser)
                 except:
                     owmessage = "Either the username is invalid or the API is down"
             else:
