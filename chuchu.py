@@ -272,10 +272,15 @@ async def on_message(message):
                 await msgInChannel('Sorry, only Cat can do that.')
             return
 
+        if (cmd == 'logout'):
+            if message.author.id == catid:
+                await bot.logout()
+            else:
+                await msgInChannel('Sorry, only Cat can do that.')
+
     #cleverbot
     if bot.user.mentioned_in(message) or message.channel.is_private:
         await reply(chatbot.message(message.content))
         return
-
 
 bot.run(args.token)
