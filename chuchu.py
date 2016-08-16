@@ -148,7 +148,7 @@ async def on_message(message):
         if (cmd == 'pokeitem'):
             if (args != ''):
                 try:
-                    pokeitem = pokemon.getItem(args)
+                    pokeitem = await pokemon.getItem(args)
                 except:
                     pokeitem = "Either the item is invalid or the API is down"
             else:
@@ -159,7 +159,7 @@ async def on_message(message):
         if (cmd == 'pokeberry'):
             if (args != ''):
                 try:
-                    pokeberry = pokemon.getBerry(args)
+                    pokeberry = await pokemon.getBerry(args)
                 except:
                     pokeberry = "Either the berry is invalid or the API is down"
             else:
@@ -170,7 +170,7 @@ async def on_message(message):
         if (cmd == 'pokemon'):
             if (args != ''):
                 try:
-                    poke = pokemon.getPokemon(args)
+                    poke = await pokemon.getPokemon(args)
                 except:
                     poke = "Either the Pokemon is invalid or the API is down"
             else:

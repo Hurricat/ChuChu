@@ -1,16 +1,14 @@
-import json
-import urllib3
-import certifi
+import aiohttp
 
 urlbase = "http://pokeapi.co/api/v2/{0}/{1}"
-http = urllib3.PoolManager(cert_reqs = 'CERT_REQUIRED', ca_certs = certifi.where())
 
-def getJson(url):
-    r = http.request('GET', url)
-    return json.loads(r.data.decode('utf-8'))
+async def getJson(url):
+    async with aiohttp.get(url) as r:
+        js = await r.json()
+        return js
 
-def getBerry(b):
-    berry = getJson(urlbase.format("berry", b.lower().replace(" ", "").replace("berry", "")))
+async def getBerry(b):
+    berry = await getJson(urlbase.format("berry", b.lower().replace(" ", "").replace("berry", "")))
     
     name = berry['name'].title()
     time = berry['growth_time']
@@ -44,8 +42,8 @@ def getBerry(b):
 
     return returnBerry
 
-def getItem(i):
-    item = getJson(urlbase.format("item", i.replace(" ", "-").lower()))
+async def getItem(i):
+    item = await getJson(urlbase.format("item", i.replace(" ", "-").lower()))
 
     name = item['names'][0]['name']
     cost = item['cost']
@@ -69,16 +67,66 @@ def getItem(i):
 
     return returnItem
 
-def getPokemon(p):
-    pokemon = getJson(urlbase.format("pokemon-species", p.lower()))
+async def getPokemon(p):
+    pokemon = await getJson(urlbase.format("pokemon-species", p.lower()))
     name = p.title()
     dex = ""
+    types = ""
 
+    #name
     for pokename in pokemon['names']:
         if pokename['language']['name'] == 'en':
             name = pokename['name']
             break
+    
+    #types for pokemon with one form
+    if len(pokemon['varieties']) == 1:
+        temppoke = await getJson(pokemon['varieties'][0]['pokemon']['url'])
+        t1 = ""
+        t2 = ""
+        typetempl = "{0} / {1}"
+        fintype = ""
+        for poketype in temppoke['types']:
+            if poketype['slot'] == 1:
+                t1 = poketype['type']['name'].title()
+            else:
+                t2 = poketype['type']['name'].title()
+        if len(temppoke['types']) == 1:
+            fintype = t1
+        else:
+            fintype = typetempl.format(t1, t2)
+        types = "Type: {0}\n".format(fintype)
 
+    #types for pokemon with multiple forms
+    else:
+        types = "\nForms:\n"
+        for pokeform in pokemon['varieties']:
+            temppoke = await getJson(pokeform['pokemon']['url'])
+            t1 = ""
+            t2 = ""
+            typetempl = "{0} / {1}"
+            fintype = ""
+            formname = ""
+            for poketype in temppoke['types']:
+                if poketype['slot'] == 1:
+                    t1 = poketype['type']['name'].title()
+                else:
+                    t2 = poketype['type']['name'].title()
+            if len(temppoke['types']) == 1:
+                fintype = t1
+            else:
+                fintype = typetempl.format(t1, t2)
+            tempform = await getJson(temppoke['forms'][0]['url'])
+            if len(tempform['form_names']) > 0:
+                for fname in tempform['form_names']:
+                    if fname['language']['name'] == 'en':
+                        formname = fname['name']
+                        break
+            else:
+                formname = name
+            types += "{0}: {1}\n".format(formname, fintype)
+
+    #pokedex entry
     for pokedex in pokemon['flavor_text_entries']:
         if pokedex['language']['name'] == 'en':
             dex += "{0}\n".format(pokedex['flavor_text'])
@@ -86,7 +134,8 @@ def getPokemon(p):
 
     returnPoke = (
         "```\n" +
-        "Species: {0}\n\n".format(name) +
+        "Species: {0}\n".format(name) +
+        "{0}\n".format(types) +
         "Pokedex:\n{0}\n".format(dex) +
         "```"
     )
