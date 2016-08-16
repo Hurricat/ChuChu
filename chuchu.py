@@ -9,6 +9,8 @@ import chatbot.main as chatbot
 import kdw.main as kdw
 import stock.main as stock
 import overwatch.main as ow
+import pokemon.main as pokemon
+import horoscope.main as horoscope
 
 address = '76.77.225.51'
 port = 4002
@@ -141,6 +143,50 @@ async def on_message(message):
                 stockInfo = "Please provide a stock symbol"
             await msgInChannel(stockInfo)
             return
+        
+        #pokemon items
+        if (cmd == 'pokeitem'):
+            if (args != ''):
+                try:
+                    pokeitem = pokemon.getItem(args)
+                except:
+                    pokeitem = "Either the item is invalid or the API is down"
+            else:
+                pokeitem = "Please provide an item"
+            await msgInChannel(pokeitem)
+
+        #pokemon berries
+        if (cmd == 'pokeberry'):
+            if (args != ''):
+                try:
+                    pokeberry = pokemon.getBerry(args)
+                except:
+                    pokeberry = "Either the berry is invalid or the API is down"
+            else:
+                pokeberry = "Please provide a berry"
+            await msgInChannel(pokeberry)
+
+        #pokemon
+        if (cmd == 'pokemon'):
+            if (args != ''):
+                try:
+                    poke = pokemon.getPokemon(args)
+                except:
+                    poke = "Either the Pokemon is invalid or the API is down"
+            else:
+                poke = "Please provide a Pokemon"
+            await msgInChannel(poke)
+
+        #horoscope
+        if (cmd == 'horoscope'):
+            if(args != ''):
+                try:
+                    horo = horoscope.getToday(args)
+                except:
+                    horo = "Either the sign is invalid or the API is down"
+            else:
+                horo = "Please provide a sign."
+            await msgInChannel(horo)
 
         #ow top heroes
         if (cmd == 'owheroes'):
