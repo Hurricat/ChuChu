@@ -1,4 +1,4 @@
 *.pyc
 __pycache__
 token.txt
-log.txt
+log*.txt
