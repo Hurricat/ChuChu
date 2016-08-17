@@ -95,16 +95,24 @@ async def on_message(message):
             await msgInChannel(
                 "```\n"
                 "@ChuChu                   - I can respond to mentions.\n"
-                "!help                     - Display this message.\n"
+                "!help                     - Display this message.\n\n"
+                "--- Overwatch Commands ---\n"
+                "!ow [username]            - Get general Overwatch stats.\n"
+                "!owheroes [username]      - Get top 5 Overwatch heroes.\n"
+                "!owhero [username] [hero] - Get stats for specific hero.\n\n"
+                "---- Pokemon Commands ----\n"
+                "!pokeitem [item]          - Get info on an item from Pokemon.\n"
+                "!pokeberry [berry]        - Get info on a berry from Pokemon.\n"
+                "!pokemon [species]        - Get info on a Pokemon species.\n\n"
+                "----- Other Commands -----\n"
+                "!cowsay [text]            - Have a cow say something.\n"
+                "!cowthink [text]          - Have a cow think about something.\n"
                 "!punch [person]           - Punch the person specified.\n"
                 "!stock [symbol]           - Get the price of a stock.\n"
                 "!kdwstatus                - Check if KDW is online.\n"
-                "!ow [username]            - Get general Overwatch stats.\n"
-                "!owheroes [username]      - Get top 5 Overwatch heroes.\n"
-                "!owhero [username] [hero] - Get stats for specific hero.\n"
-                "!cowsay [text]            - Have a cow say something.\n"
-                "!cowthink [text]          - Have a cow think about something.\n"
-                "```"
+                "!horoscope [sign]         - Get a horoscope because why not.\n"
+                "```\n"
+                "For more detailed information, go here: http://ailurophiliac.com/about"
             )
             return
     
@@ -120,6 +128,17 @@ async def on_message(message):
             else:
                 punchtarget = 'someone'
             await msgInChannel('I am going to punch {0}.'.format(punchtarget))
+            return
+
+        #explode
+        if (cmd == 'explode'):
+            await msgInChannel('**GARY! YOU ARE GONNA FINISH YOUR DESSERT, AND YOU ARE GONNA LIKE IT!!**')
+            return
+
+        #technique
+        if (cmd == 'technique'):
+            await msgInChannel("First go like this, spin around. Stop! Double take three times: one, two, three. Theeeen PELVIC THRUST! Whoooo! Whooooooo! Stop on your right foot, don't forget it! Now it's time to bring it around town. Bring-it-a-round-town. Then you do this, then this, and this, and that, and-this-and-that-and-this-and-that, and then...")
+            await msgInChannel("https://gyazo.com/cdadc73fffb89409f57778be7d3eeb51")
             return
 
         #get stock prices
@@ -148,9 +167,9 @@ async def on_message(message):
         if (cmd == 'pokeitem'):
             if (args != ''):
                 try:
-                    pokeitem = await pokemon.getItem(args)
+                    pokeitem = pokemon.getItem(args)
                 except:
-                    pokeitem = "Either the item is invalid or the API is down"
+                    pokeitem = "The item is invalid"
             else:
                 pokeitem = "Please provide an item"
             await msgInChannel(pokeitem)
@@ -159,9 +178,9 @@ async def on_message(message):
         if (cmd == 'pokeberry'):
             if (args != ''):
                 try:
-                    pokeberry = await pokemon.getBerry(args)
+                    pokeberry = pokemon.getBerry(args)
                 except:
-                    pokeberry = "Either the berry is invalid or the API is down"
+                    pokeberry = "The berry is invalid"
             else:
                 pokeberry = "Please provide a berry"
             await msgInChannel(pokeberry)
@@ -170,9 +189,9 @@ async def on_message(message):
         if (cmd == 'pokemon'):
             if (args != ''):
                 try:
-                    poke = await pokemon.getPokemon(args)
+                    poke = pokemon.getPokemon(args)
                 except:
-                    poke = "Either the Pokemon is invalid or the API is down"
+                    poke = "The Pokemon is invalid"
             else:
                 poke = "Please provide a Pokemon"
             await msgInChannel(poke)
