@@ -74,7 +74,10 @@ async def on_message(message):
         
 
     #message log
-    logmsg = message.timestamp.strftime("%Y-%m-%d %H:%M:%S") + ' - ' + message.server.name + ": #" + message.channel.name + " - " + (message.author.name[:13] + ': ').ljust(15) + message.content
+    if message.channel.is_private = True:
+        logmsg = message.timestamp.strftime("%Y-%m-%d %H:%M:%S") + ' - ' + message.server.name + ": #" + message.channel.name + " - " + (message.author.name[:13] + ': ').ljust(15) + message.content
+    else:
+        logmsg = message.timestamp.strftime("%Y-%m-%d %H:%M:%S") + ' - ' + (message.author.name[:13] + ': ').ljust(15) + message.content
     logfile.write(logmsg + '\n')
     print(logmsg)
     
