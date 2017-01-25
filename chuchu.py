@@ -205,7 +205,7 @@ async def on_message(message):
         )
         return
 
-    cleverbot
+    #cleverbot
     if bot.user.mentioned_in(message) or message.channel.is_private:
         await reply(chatbot.message(message.content))
         return
