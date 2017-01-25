@@ -24,7 +24,7 @@ args = parser.parse_args()
 async def on_ready():
 
     #setup bot
-    await bot.change_status(defaultGame)
+    await bot.change_presence(game = defaultGame)
     print('Bot Started.')
 
 @bot.event
@@ -66,8 +66,9 @@ async def on_message(message):
 
     #change playing game
     async def changeGame(game):
-        await bot.change_status(game)
-
+        await bot.change_presence(game = game)
+    
+    #clear channel of messages
     async def clearChannel(amount = 100):
         await bot.purge_from(channel = message.channel, limit = amount)
         
@@ -147,6 +148,7 @@ async def on_message(message):
             else:
                 horo = "Please provide a sign."
             await msgInChannel(horo)
+            return
 
         #cowsay
         if (cmd == 'cowsay'):
@@ -157,6 +159,7 @@ async def on_message(message):
             else:
                 cowmessage = subprocess.check_output(['cowsay', 'Please provide some text']).decode('utf-8')
             await msgInChannel('```\n' + cowmessage + '```')
+            return
 
         #cowthink
         if (cmd == 'cowthink'):
@@ -165,6 +168,7 @@ async def on_message(message):
             else:
                 cowmessage = subprocess.check_output(['cowthink', 'Please provide some text']).decode('utf-8')
             await msgInChannel('```\n' + cowmessage + '```')
+            return
 
         #change game
         if (cmd == 'game'):
