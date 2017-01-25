@@ -12,13 +12,12 @@ import overwatch.main as ow
 import pokemon.main as pokemon
 import horoscope.main as horoscope
 
-address = '76.77.225.51'
+address = '76.77.238.1'
 port = 4002
 bot = discord.Client()
 defaultGame = discord.Game()
 defaultGame.name = "SHOW BY ROCK!!"
 catid = '132072321421672448'
-logfile = open('log.txt', 'a')
 
 parser = argparse.ArgumentParser()
 parser.add_argument("token", help = "the application token for the bot to use")
@@ -31,6 +30,9 @@ async def on_ready():
     await bot.change_status(defaultGame)
     print('Bot Started.')
 
+@bot.event
+async def on_server_join(server):
+    await bot.leave_server(server)
 
 @bot.event
 async def on_member_join(member):
@@ -74,17 +76,18 @@ async def on_message(message):
         
 
     #message log
-    if message.channel.is_private = True:
+    if message.channel.is_private != True:
         logmsg = message.timestamp.strftime("%Y-%m-%d %H:%M:%S") + ' - ' + message.server.name + ": #" + message.channel.name + " - " + (message.author.name[:13] + ': ').ljust(15) + message.content
     else:
         logmsg = message.timestamp.strftime("%Y-%m-%d %H:%M:%S") + ' - ' + (message.author.name[:13] + ': ').ljust(15) + message.content
+    logfile = open("log.txt", "a")
     logfile.write(logmsg + '\n')
+    logfile.close()
     print(logmsg)
     
     #don't respond to self
     if message.author.id == bot.user.id:
         return
-    
     if message.content.startswith('!'):
         try:
             cmd = message.content.split(' ', 1)[0].replace('!','')
@@ -140,8 +143,10 @@ async def on_message(message):
 
         #technique
         if (cmd == 'technique'):
-            await msgInChannel("First go like this, spin around. Stop! Double take three times: one, two, three. Theeeen PELVIC THRUST! Whoooo! Whooooooo! Stop on your right foot, don't forget it! Now it's time to bring it around town. Bring-it-a-round-town. Then you do this, then this, and this, and that, and-this-and-that-and-this-and-that, and then...")
-            await msgInChannel("https://gyazo.com/cdadc73fffb89409f57778be7d3eeb51")
+            await msgInChannel(
+                "First go like this, spin around. Stop! Double take three times: one, two, three. Theeeen PELVIC THRUST! Whoooo! Whooooooo! Stop on your right foot, don't forget it! Now it's time to bring it around town. Bring-it-a-round-town. Then you do this, then this, and this, and that, and-this-and-that-and-this-and-that, and then...\n" +
+                "https://gyazo.com/cdadc73fffb89409f57778be7d3eeb51"
+            )
             return
 
         #get stock prices
@@ -300,9 +305,16 @@ async def on_message(message):
             else:
                 await msgInChannel('Sorry, only Cat can do that.')
 
-    #cleverbot
-    if bot.user.mentioned_in(message) or message.channel.is_private:
-        await reply(chatbot.message(message.content))
+    if "are you serious" in message.content.lower() or "are you fucking serious" in message.content.lower():
+        await msgInChannel(
+            'Does this look unserious to you?\n' +
+            'https://gyazo.com/f238691fc191ac3ef12ba52bc4adba8e'
+        )
         return
+
+    #cleverbot
+    #if bot.user.mentioned_in(message) or message.channel.is_private:
+    #    await reply(chatbot.message(message.content))
+    #    return
 
 bot.run(args.token)

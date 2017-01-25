@@ -240,3 +240,72 @@ def getItem(identifier):
     )
 
     return return_item
+
+def getMachine(machine, game):
+    g = cleanInput(game)
+    inp = cleanInput(machine)
+    i1 = inp[:2]
+    i2 = inp[2:].replace("-", "")
+    if len(i2) == 1:
+        i2 = "0" + i2
+    m = i1 + i2
+
+    c.execute('''
+        SELECT
+            version_names.name,
+            versions.version_group_id
+        FROM
+            versions JOIN version_names ON
+                versions.id = version_names.version_id AND
+                version_names.local_language_id = 9
+        WHERE
+            versions.identifier = ?
+    ''', (g,))
+    game = c.fetchone()
+    game_name = game[0]
+    version_group_id = game[1]
+    print(game)
+
+    c.execute('''
+        SELECT
+            item_names.name,
+            move_names.name,
+            move_flavor_text.flavor_text,
+            type_names.name
+        FROM
+            items JOIN item_names ON
+                items.id = item_names.item_id AND
+                item_names.local_language_id = 9
+            JOIN machines ON
+                items.id = machines.item_id AND
+                machines.version_group_id = ?
+            JOIN moves ON
+                machines.move_id = moves.id
+            JOIN type_names ON
+                moves.type_id = type_names.type_id AND
+                type_names.local_language_id = 9
+            JOIN move_names ON
+                machines.move_id = move_names.move_id AND
+                move_names.local_language_id = 9
+            JOIN move_flavor_text ON
+                machines.move_id = move_flavor_text.move_id AND
+                move_flavor_text.language_id = 9 AND
+                move_flavor_text.version_group_id = ?
+        WHERE
+            items.identifier = ?
+    ''', (version_group_id, version_group_id, m))
+    machines = c.fetchone()
+    print(machines)
+    item_name = machines[0]
+    move_name = machines[1]
+    move_flavor = machines[2]
+    type_name = machines[3]
+
+    return_tm = (
+        "```\n" +
+        "{0} in {1}\n\n".format(item_name, game_name) +
+        "{0} - {1}\n{2}\n".format(move_name, type_name, move_flavor) +
+        "```"
+    )
+
+    return return_tm
