@@ -16,16 +16,6 @@ The following commands can be used:
 @ChuChu                   - Respond to mentions.
 !help                     - Display this message.
 
---- Overwatch Commands ---
-!ow [username]            - Get general Overwatch stats.
-!owheroes [username]      - Get top 5 Overwatch heroes.
-!owhero [username] [hero] - Get stats for specific hero.
-
----- Pokemon Commands ----
-!pokeitem [item]          - Get info on an item from Pokemon.
-!pokeberry [berry]        - Get info on a berry from Pokemon.
-!pokemon [species]        - Get info on a Pokemon species.
-
 ----- Other Commands -----
 !cowsay [text]            - Have a cow say something.
 !cowthink [text]          - Have a cow think about something.
@@ -56,7 +46,4 @@ https://discordapp.com/oauth2/authorize?client_id=192780916710572032&scope=bot
 
 ## Acknowledgements
 * Rapptz - discord.py
-* SunDwarf - Overwatch API
 * folz - cleverbot module
-* veekun - pokedex
-* phalt - PokeAPI (no longer used, but code using it is still viewable in repo)
