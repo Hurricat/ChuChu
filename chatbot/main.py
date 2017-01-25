@@ -1,7 +1,7 @@
 import cleverbot
 import re
 
-cleverbot = cleverbot.Cleverbot()
+cleverbot = cleverbot.Cleverbot('chuchu-bot')
 
 def message(message):
     cbotmessage = re.sub(r'\<[^>]*\>[ ]', '', message)

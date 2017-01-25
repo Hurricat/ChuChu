@@ -7,9 +7,6 @@ import subprocess
 
 import chatbot.main as chatbot
 import kdw.main as kdw
-import stock.main as stock
-import overwatch.main as ow
-import pokemon.main as pokemon
 import horoscope.main as horoscope
 
 address = '76.77.238.1'
@@ -27,7 +24,7 @@ args = parser.parse_args()
 async def on_ready():
 
     #setup bot
-    await bot.change_status(defaultGame)
+    await bot.change_presence(game = defaultGame)
     print('Bot Started.')
 
 @bot.event
@@ -69,8 +66,9 @@ async def on_message(message):
 
     #change playing game
     async def changeGame(game):
-        await bot.change_status(game)
-
+        await bot.change_presence(game = game)
+    
+    #clear channel of messages
     async def clearChannel(amount = 100):
         await bot.purge_from(channel = message.channel, limit = amount)
         
@@ -102,19 +100,10 @@ async def on_message(message):
                 "```\n"
                 "@ChuChu                   - I can respond to mentions.\n"
                 "!help                     - Display this message.\n\n"
-                "--- Overwatch Commands ---\n"
-                "!ow [username]            - Get general Overwatch stats.\n"
-                "!owheroes [username]      - Get top 5 Overwatch heroes.\n"
-                "!owhero [username] [hero] - Get stats for specific hero.\n\n"
-                "---- Pokemon Commands ----\n"
-                "!pokeitem [item]          - Get info on an item from Pokemon.\n"
-                "!pokeberry [berry]        - Get info on a berry from Pokemon.\n"
-                "!pokemon [species]        - Get info on a Pokemon species.\n\n"
                 "----- Other Commands -----\n"
                 "!cowsay [text]            - Have a cow say something.\n"
                 "!cowthink [text]          - Have a cow think about something.\n"
                 "!punch [person]           - Punch the person specified.\n"
-                "!stock [symbol]           - Get the price of a stock.\n"
                 "!kdwstatus                - Check if KDW is online.\n"
                 "!horoscope [sign]         - Get a horoscope because why not.\n"
                 "```\n"
@@ -149,61 +138,6 @@ async def on_message(message):
             )
             return
 
-        #get stock prices
-        if (cmd == 'stock'):
-            if (args != ''):
-                try:
-                    stocksym = args
-                    stockInfo = (
-                        "```\n" +
-                        "Stock Information for {0}\n".format(stock.get_name(stocksym)) +
-                        "  Price:   {0}\n".format(stock.get_price(stocksym)) +
-                        "  Open:    {0}\n".format(stock.get_open(stocksym)) +
-                        "  High:    {0}\n".format(stock.get_high(stocksym)) +
-                        "  Low:     {0}\n".format(stock.get_low(stocksym)) +
-                        "  Volume:  {0}\n".format(stock.get_vol(stocksym)) +
-                        "```"
-                    )
-                except:
-                    stockInfo = "Invalid stock symbol"
-            else:
-                stockInfo = "Please provide a stock symbol"
-            await msgInChannel(stockInfo)
-            return
-        
-        #pokemon items
-        if (cmd == 'pokeitem'):
-            if (args != ''):
-                try:
-                    pokeitem = pokemon.getItem(args)
-                except:
-                    pokeitem = "The item is invalid"
-            else:
-                pokeitem = "Please provide an item"
-            await msgInChannel(pokeitem)
-
-        #pokemon berries
-        if (cmd == 'pokeberry'):
-            if (args != ''):
-                try:
-                    pokeberry = pokemon.getBerry(args)
-                except:
-                    pokeberry = "The berry is invalid"
-            else:
-                pokeberry = "Please provide a berry"
-            await msgInChannel(pokeberry)
-
-        #pokemon
-        if (cmd == 'pokemon'):
-            if (args != ''):
-                try:
-                    poke = pokemon.getPokemon(args)
-                except:
-                    poke = "The Pokemon is invalid"
-            else:
-                poke = "Please provide a Pokemon"
-            await msgInChannel(poke)
-
         #horoscope
         if (cmd == 'horoscope'):
             if(args != ''):
@@ -214,49 +148,9 @@ async def on_message(message):
             else:
                 horo = "Please provide a sign."
             await msgInChannel(horo)
-
-        #ow top heroes
-        if (cmd == 'owheroes'):
-            if (args != ''):
-                try:
-                    owuser = args
-                    owmessage = await ow.owheroes(owuser)
-                except:
-                    owmessage = "Either the username is invalid or the API is down"
-            else:
-                owmessage = "Please provide a username"
-            await msgInChannel(owmessage)
             return
 
-        #hero specific stats
-        if (cmd == 'owhero'):
-            if (args != ''):
-                try:
-                    owuser = args.split(' ', 1)[0]
-                    print(owuser)
-                    owhero = args.split(' ', 1)[1]
-                    print(owhero)
-                    owmessage = await ow.owhero(owuser, owhero)
-                except:
-                    owmessage = "Either the username/hero is invalid or the API is down"
-            else:
-                owmessage = "Please provide a username and hero"
-            await msgInChannel(owmessage)
-            return
-
-        #overall ow stats
-        if (cmd == 'ow'):
-            if (args != ''):
-                try:
-                    owuser = args
-                    owmessage = await ow.ow(owuser)
-                except:
-                    owmessage = "Either the username is invalid or the API is down"
-            else:
-                owmessage = "Please provide a username"
-            await msgInChannel(owmessage)
-            return
-
+        #cowsay
         if (cmd == 'cowsay'):
             if (args != ''):
                 if args.startswith('-'):
@@ -265,13 +159,16 @@ async def on_message(message):
             else:
                 cowmessage = subprocess.check_output(['cowsay', 'Please provide some text']).decode('utf-8')
             await msgInChannel('```\n' + cowmessage + '```')
+            return
 
+        #cowthink
         if (cmd == 'cowthink'):
             if (args != ''):
                 cowmessage = subprocess.check_output(['cowthink', args]).decode('utf-8')
             else:
                 cowmessage = subprocess.check_output(['cowthink', 'Please provide some text']).decode('utf-8')
             await msgInChannel('```\n' + cowmessage + '```')
+            return
 
         #change game
         if (cmd == 'game'):
@@ -313,8 +210,8 @@ async def on_message(message):
         return
 
     #cleverbot
-    #if bot.user.mentioned_in(message) or message.channel.is_private:
-    #    await reply(chatbot.message(message.content))
-    #    return
+    if bot.user.mentioned_in(message) or message.channel.is_private:
+        await reply(chatbot.message(message.content))
+        return
 
 bot.run(args.token)
