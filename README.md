@@ -20,7 +20,6 @@ The following commands can be used:
 !cowsay [text]            - Have a cow say something.
 !cowthink [text]          - Have a cow think about something.
 !punch [person]           - Punch the person specified.
-!stock [symbol]           - Gets stock information
 !kdwstatus                - Gets server status of Kirby's Dream World
 !horoscope [sign]         - Get a horoscope because why not.
 
